@@ -483,7 +483,7 @@ public class LocalNotification extends CordovaPlugin {
             eventQueue.add(js);
             return;
         }
-        webView.evaluateJavascript(js);
+        webView.sendJavascript(js);
     }
 
     /**
