@@ -21,9 +21,9 @@
  * @APPPLANT_LICENSE_HEADER_END@
  */
 
+#import "AppDelegate.h"
 #import "APPLocalNotification.h"
 #import "APPLocalNotificationOptions.h"
-#import "AppDelegate+APPLocalNotification.h"
 #import "UIApplication+APPLocalNotification.h"
 #import "UILocalNotification+APPLocalNotification.h"
 
@@ -501,7 +501,6 @@
             && notification.timeIntervalSinceFireDate > seconds)
         {
             [self.app cancelLocalNotification:notification];
-
             [self fireEvent:@"cancel" notification:notification];
         }
     }
@@ -527,8 +526,12 @@
 
     [self fireEvent:event notification:notification];
 
-    if ([event isEqualToString:@"click"] && ![notification isRepeating])
-    {
+    if (![event isEqualToString:@"click"])
+        return;
+
+    if ([notification isRepeating]) {
+        [self fireEvent:@"clear" notification:notification];
+    } else {
         [self.app cancelLocalNotification:notification];
         [self fireEvent:@"cancel" notification:notification];
     }
@@ -668,7 +671,7 @@
     }
 
     js = [NSString stringWithFormat:
-          @"cordova.plugins.notification.local.fireEvent('%@', %@)",
+          @"cordova.plugins.notification.local.core.fireEvent('%@', %@)",
           event, params];
 
     if (deviceready) {
